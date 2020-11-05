@@ -1,43 +1,60 @@
 package com.gmt.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gmt.entity.Member;
-import com.gmt.service.MemberService;
+import com.gmt.member.service.MemberService;
 
-@RestController			
+@RestController
 public class MemberController {
 
 	@Autowired
 	private MemberService memberService;
-	
-	@PutMapping("/register")
-	@ResponseBody
-	public String registerMember() {
 
-		System.out.println("Hey there..");
-		
-		int result = memberService.registerMember(new Member());
+	@PostMapping("/register")
+	public Member registerMember(@RequestBody Member member) {
 
-		return "Member Registration Successful";
+		return memberService.registerMember(member);
+
 	}
-	
-	@GetMapping("/get")
-	public String getMemberDetails(@RequestParam int id) {
-		
-		Member gymMember = memberService.getMemberDetails(id);
-		
-		if(gymMember == null) {
-			
-		}
-		
-		System.out.println("Hey there..getMemberDetails");
-		
-		return gymMember.toString();
+
+	@GetMapping("/gymmembers/{gymid}")
+	public List<Member> getGymMembersList(@PathVariable int gymid) {
+
+		List<Member> gymMembers = memberService.getGymMembers(gymid);
+
+		return gymMembers;
 	}
+
+	@GetMapping("/member/{memberid}")
+	public Member getMemberDetails(@PathVariable int memberid) {
+
+		Member gymMember = memberService.getMemberDetails(memberid);
+
+		return gymMember;
+	}
+
+	@PutMapping("/update/{memberid}")
+	public Member updateMember(@PathVariable int memberid) {
+
+		return memberService.updateMember(memberid);
+
+	}
+
+	@DeleteMapping("/delete/{memberid}")
+	public String deleteMember(@PathVariable int memberid) {
+
+		return "redirect:/update/" + memberid;
+
+	}
+
 }
